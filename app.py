@@ -13,12 +13,12 @@ app.secret_key = 'your_secret_key'
 def index():
     return render_template('home.html')
 
-@app.route('/predictdata',methods=['GET','POST'])
+@app.route('/predictdata', methods=['GET', 'POST'])
 def predict_datapoint():
-    if(request.method=='GET'):
+    if request.method == 'GET':
         return render_template('home.html')
     else:
-        data=CustomData(
+        data = CustomData(
             carat=float(request.form.get('carat')),
             x=float(request.form.get('x')),
             y=float(request.form.get('y')),
@@ -29,18 +29,19 @@ def predict_datapoint():
             color=request.form.get('color'),
             clarity=request.form.get('clarity'),
         )
-        pred_df=data.get_data_as_data_frame()
+        pred_df = data.get_data_as_data_frame()
         print(pred_df)
         print("Before Prediction")
 
-        predict_pipeline=PredictPipeline()
+        predict_pipeline = PredictPipeline()
         print("Mid Prediction")
-        results=predict_pipeline.predict(pred_df)
+        results = predict_pipeline.predict(pred_df)
         print("after Prediction")
+        
         flash(f'The Predicted Score is {results[0]}')
-        # return render_template('home.html',stri="The Predicted Score is",results=results[0])
-        return redirect(url_for('predict_datapoint'))
 
+        # Render the home page with the flash message and prediction result
+        return render_template('home.html', prediction_result=results[0])
 
 if __name__=="__main__":
     app.run(host="0.0.0.0",debug=True)        
